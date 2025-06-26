@@ -1,46 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>The Pyramid Scheme</title>
-    <style>
-        body { 
-            font-family: Comic Sans MS, cursive, sans-serif;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            text-align: center;
-            padding: 50px;
-        }
-        .pyramid {
-            font-size: 100px;
-        }
-        .warning {
-            color: red;
-            font-weight: bold;
-            margin-top: 30px;
-        }
-        .disclaimer {
-            color: #555;
-            margin-top: 40px;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Pyramid Scheme Application</title>
+  <style>
+    body {
+      background-color: #282c34; /* Change this color as you wish */
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #3a3f4b;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+    .container input, .container select {
+      padding: 8px;
+      margin: 8px 0 16px 0;
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .container button {
+      background: #ff9800;
+      color: #222;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .spinner {
+      margin: 20px auto;
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #ff9800;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+    #result {
+      font-size: 1.5em;
+      margin-top: 24px;
+      display: none;
+      color: #0f0;
+    }
+  </style>
 </head>
 <body>
-    <div class="pyramid">🔺</div>
-    <h1>Welcome to the Pyramid Scheme!</h1>
-    <p>
-        Want to get rich? All you have to do is send me $10,<br>
-        then recruit 10 more people to do the same!<br>
-        (Totally not a scam, I promise 😉)
-    </p>
-    <div class="warning">
-        DO NOT SEND ANY MONEY!<br>
-        This is a joke. <br>
-        Pyramid schemes are illegal and this website is just for laughs.
-    </div>
-    <div class="disclaimer">
-        <hr>
-        <em>Disclaimer: This page is satire. Please don't actually try this at home or anywhere else!</em>
-    </div>
+  <div class="container" id="form-container">
+    <h2>Pyramid Scheme Signup</h2>
+    <form id="scamForm">
+      <label>Deposit Amount ($):</label>
+      <input type="number" required><br>
+
+      <label>Duration (months):</label>
+      <input type="number" required><br>
+
+      <label>Interest Rate (%):</label>
+      <input type="number" required><br>
+
+      <label>Risk Level:</label>
+      <select required>
+        <option value="">Select</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="very_high">Very High</option>
+      </select><br>
+
+      <button type="submit">Submit</button>
+    </form>
+    <div class="spinner" id="spinner"></div>
+    <div id="result">here’s $69420</div>
+  </div>
+  <script>
+    const form = document.getElementById('scamForm');
+    const spinner = document.getElementById('spinner');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      form.style.display = 'none';
+      spinner.style.display = 'block';
+
+      setTimeout(() => {
+        spinner.style.display = 'none';
+        result.style.display = 'block';
+      }, 2500); // 2.5 seconds
+    });
+  </script>
 </body>
 </html>
