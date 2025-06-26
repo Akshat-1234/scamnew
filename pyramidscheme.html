@@ -5,7 +5,7 @@
   <title>Pyramid Scheme Application</title>
   <style>
     body {
-      background-color: #282c34; /* Change this color as you wish */
+      background-color: #282c34;
       color: #fff;
       font-family: Arial, sans-serif;
       display: flex;
@@ -63,41 +63,44 @@
 <body>
   <div class="container" id="form-container">
     <h2>Pyramid Scheme Signup</h2>
-<form id="scamForm">
-  <label>Deposit Amount (₹):</label>
-  <input type="number" required><br>
+    <form id="scamForm">
+      <label>Deposit Amount (₹):</label>
+      <input type="number" required><br>
 
-  <label>Duration (months):</label>
-  <select required>
-    <option value="">Select</option>
-    <option value="1">1</option>
-    <option value="3">3</option>
-    <option value="6">6</option>
-    <option value="12">12</option>
-    <option value="24">24</option>
-  </select><br>
+      <label>Duration (months):</label>
+      <select required>
+        <option value="">Select</option>
+        <option value="1">1</option>
+        <option value="3">3</option>
+        <option value="6">6</option>
+        <option value="12">12</option>
+        <option value="24">24</option>
+      </select><br>
 
-  <label>Interest Rate (%):</label>
-  <input type="number" min="0.1" step="0.1" required><br>
+      <label>Interest Rate (%):</label>
+      <input type="number" min="0.1" step="0.1" required><br>
 
-  <label>Risk Level:</label>
-  <select required>
-    <option value="">Select</option>
-    <option value="low">Low</option>
-    <option value="medium">Medium</option>
-    <option value="high">High</option>
-    <option value="very_high">Very High</option>
-  </select><br>
+      <label>Risk Level:</label>
+      <select required>
+        <option value="">Select</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="very_high">Very High</option>
+      </select><br>
 
-  <button type="submit">Submit</button>
-</form>
+      <button type="submit">Submit</button>
+    </form>
     <div class="spinner" id="spinner"></div>
     <div id="result">here’s ₹69420</div>
   </div>
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;display:none;"></canvas>
   <script>
     const form = document.getElementById('scamForm');
     const spinner = document.getElementById('spinner');
     const result = document.getElementById('result');
+    const confettiCanvas = document.getElementById('confetti-canvas');
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -107,8 +110,60 @@
       setTimeout(() => {
         spinner.style.display = 'none';
         result.style.display = 'block';
+        launchConfetti();
       }, 2500); // 2.5 seconds
     });
+
+    // Simple Confetti effect
+    function launchConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      confettiCanvas.style.display = 'block';
+      let ctx = confettiCanvas.getContext('2d');
+      let pieces = [];
+      let numberOfPieces = 100;
+      let colors = ['#ff9800', '#f44336', '#4caf50', '#2196f3', '#fff', '#e91e63'];
+
+      for (let i = 0; i < numberOfPieces; i++) {
+        pieces.push({
+          x: Math.random() * confettiCanvas.width,
+          y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+          w: 10 + Math.random() * 10,
+          h: 10 + Math.random() * 10,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: Math.random() * 2 * Math.PI,
+          speed: 2 + Math.random() * 3
+        });
+      }
+
+      let frame = 0;
+      function drawConfetti() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        for (let i = 0; i < pieces.length; i++) {
+          let p = pieces[i];
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+          ctx.restore();
+
+          p.y += p.speed;
+          p.angle += 0.02;
+          if (p.y > confettiCanvas.height) {
+            p.x = Math.random() * confettiCanvas.width;
+            p.y = -20;
+          }
+        }
+        frame++;
+        if (frame < 200) { // Show confetti for a short time
+          requestAnimationFrame(drawConfetti);
+        } else {
+          confettiCanvas.style.display = 'none';
+        }
+      }
+      drawConfetti();
+    }
   </script>
 </body>
 </html>
