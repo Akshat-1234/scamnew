@@ -2,73 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AISA KYU VEDANT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    @font-face {
+      font-family: 'CustomFont';
+      src: url('https://fonts.gstatic.com/s/ebgaramond/v27/SlGTmQiekhY6rW4zXyZhZV3aCw.woff2') format('woff2');
+    }
     body {
       margin: 0;
-      height: 100vh;
-      background: radial-gradient(#0a0a1a, #000010);
+      padding: 0;
+      background-color: #0a0a18;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      color: #d4af37;
-      font-family: 'Georgia', serif;
-      overflow: hidden;
-      position: relative;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'CustomFont', serif;
+      color: #c89117;
     }
-
-    .border-line {
-      position: absolute;
-      height: 3px;
-      background: linear-gradient(to right, #d4af37, #b8860b, #d4af37);
-      width: 90%;
-    }
-
-    .top-border {
-      top: 20px;
-    }
-
-    .bottom-border {
-      bottom: 20px;
-    }
-
-    .title {
-      text-align: center;
-      color: #FFD700;
-      text-shadow: 
-        1px 1px 0 #b8860b,
-        2px 2px 4px rgba(0, 0, 0, 0.7);
-    }
-
-    .title span {
+    #textCanvas {
       display: block;
-      background: linear-gradient(to bottom, #ffef9f, #c79500);
-      -webkit-background-clip: text;
-      color: transparent;
+      margin: 20px 0;
+      border: 1px solid #333;
+    }
+    input, button, select {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+    input[type="text"] {
+      width: 250px;
+    }
+    input[type="range"] {
+      width: 150px;
+    }
+    button {
+      background-color: #c89117;
+      color: black;
       font-weight: bold;
+      cursor: pointer;
+      margin-left: 10px;
     }
-
-    .line1 {
-      font-size: 60px;
-      margin-bottom: 10px;
+    button:hover {
+      background-color: #e2a41a;
     }
-
-    .line2 {
-      font-size: 100px;
-      letter-spacing: 2px;
+    .controls {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
-  <div class="border-line top-border"></div>
-
-  <div class="title">
-    <span class="line1">AISA KYU</span>
-    <span class="line2">VEDANT</span>
+  <div class="controls">
+    <input type="text" id="userText" placeholder="Text here..." oninput="drawText()" />
+    <label for="fontSize">Size:</label>
+    <input type="range" id="fontSize" min="40" max="160" value="96" oninput="drawText()">
+    <button onclick="downloadImage()">Download Image</button>
   </div>
 
-  <div class="border-line bottom-border"></div>
+  <canvas id="textCanvas" width="1360" height="613"></canvas>
+
+  <script>
+    const canvas = document.getElementById("textCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function drawText() {
+      const userText = document.getElementById("userText").value;
+      const fontSize = document.getElementById("fontSize").value;
+
+      ctx.fillStyle = "#0a0a18";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "#c89117";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(68, 5);
+      ctx.lineTo(canvas.width - 68, 5);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(68, canvas.height - 5);
+      ctx.lineTo(canvas.width - 68, canvas.height - 5);
+      ctx.stroke();
+
+      ctx.fillStyle = "#c89117";
+      ctx.font = `bold ${fontSize}px CustomFont, Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(userText.toUpperCase(), canvas.width / 2, canvas.height / 2 + 30);
+    }
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'custom_text_poster.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    drawText();
+  </script>
 </body>
 </html>
