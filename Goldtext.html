@@ -5,126 +5,271 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Custom Text Poster</title>
   <style>
-    @font-face {
-      font-family: 'CustomFont';
-      src: url('https://fonts.gstatic.com/s/ebgaramond/v27/SlGTmQiekhY6rW4zXyZhZV3aCw.woff2') format('woff2');
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@700&family=Montserrat:wght@700&display=swap');
     body {
       margin: 0;
       padding: 0;
-      background-color: #0a0a18;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: 'CustomFont', serif;
+      transition: background 0.3s ease, color 0.3s ease;
+      font-family: 'EB Garamond', serif;
       color: #c89117;
     }
-
+    body.dark {
+      background: radial-gradient(circle at center, #0a0a18 0%, #05050a 100%);
+    }
+    body.light {
+      background: radial-gradient(circle at center, #fbfbfb 0%, #e0e0e0 100%);
+      color: #664400;
+    }
     #textCanvas {
       display: block;
       margin: 20px auto;
-      border: none;
       max-width: 100%;
       height: auto;
+      transition: all 0.4s ease;
     }
-
-    input, button {
-      font-size: 16px;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-      width: 100%;
+    .controls {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      margin: 10px auto;
       box-sizing: border-box;
+      transition: background 0.3s ease;
     }
-
-    input[type="text"] {
-      max-width: 250px;
+    body.light .controls {
+      background: rgba(255, 255, 255, 0.8);
     }
-
+    .control-group {
+      margin-bottom: 15px;
+    }
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 45%;
+      min-width: 120px;
+    }
+    textarea, button, select, input[type="range"], label {
+      font-family: 'EB Garamond', serif;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      resize: none;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+    }
     input[type="range"] {
-      max-width: 150px;
+      width: 100%;
     }
-
     button {
       background-color: #c89117;
       color: black;
       font-weight: bold;
       cursor: pointer;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      display: block;
+      margin: 20px auto 0;
     }
-
-    button:hover {
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+    }
+    button:hover:enabled {
       background-color: #e2a41a;
+      transform: scale(1.05);
     }
-
-    .controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      padding: 10px;
-      width: 90%;
-      max-width: 600px;
+    .tooltip {
+      border-bottom: 1px dotted #999;
+      cursor: help;
     }
-
     .copyright {
-      margin-bottom: 20px;
+      text-align: center;
+      width: 100%;
+      margin: 10px auto;
       font-size: 14px;
       color: #888;
+      font-family: 'EB Garamond', serif;
+    }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      font-size: 14px;
+      z-index: 10;
+    }
+    .warning {
+      text-align: center;
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .option {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
-<body>
+<body class="dark">
   <div class="controls">
-    <input type="text" id="userText" placeholder="Text here..." oninput="drawText()" />
-    <label for="fontSize">Size:</label>
-    <input type="range" id="fontSize" min="40" max="160" value="96" oninput="drawText()">
-    <button onclick="downloadImage()">Download Image</button>
+    <div class="control-group">
+      <label for="themeToggle">Theme: <span class="tooltip" title="Switch light/dark mode">ℹ️</span></label>
+      <select id="themeToggle">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="fontSelect">Font: <span class="tooltip" title="Choose a font family">ℹ️</span></label>
+      <select id="fontSelect" onchange="drawText()">
+        <option value="EB Garamond">EB Garamond</option>
+        <option value="Montserrat">Montserrat</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="userText">Enter your title: <span class="tooltip" title="Type your poster text here">ℹ️</span></label>
+      <textarea id="userText" placeholder="Text here..." oninput="handleInput()"></textarea>
+    </div>
+    <div class="options-row">
+      <div class="option">
+        <label for="fontSize">Size: <span id="sizeValue">96</span>px <span class="tooltip" title="Adjust font size">ℹ️</span></label>
+        <input type="range" id="fontSize" min="40" max="160" value="96" oninput="updateSizeValue()">
+      </div>
+      <div class="option">
+        <label><input type="checkbox" id="capsToggle" checked onchange="drawText()"> ALL CAPS <span class="tooltip" title="Toggle uppercase text">ℹ️</span></label>
+      </div>
+      <div class="option">
+        <label for="textAlign">Alignment: <span class="tooltip" title="Choose text alignment">ℹ️</span></label>
+        <select id="textAlign" onchange="drawText()">
+          <option value="center">Center</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+    </div>
+    <div class="warning" id="textWarning">⚠️ Text is too long and may overflow the canvas.</div>
+    <button id="downloadBtn" onclick="downloadImage()" disabled>Download Image</button>
   </div>
-
   <canvas id="textCanvas" width="1360" height="613"></canvas>
   <div class="copyright">© Akshat</div>
-
+  <div id="toast">Your poster is downloading!</div>
   <script>
-    const canvas = document.getElementById("textCanvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById('textCanvas');
+    const ctx = canvas.getContext('2d');
+    const userText = document.getElementById('userText');
+    const fontSizeInput = document.getElementById('fontSize');
+    const sizeValue = document.getElementById('sizeValue');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const fontSelect = document.getElementById('fontSelect');
+    const warning = document.getElementById('textWarning');
+
+    function wrapText(text, maxWidth) {
+      const words = text.split(' ');
+      const lines = [];
+      let line = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + (line ? ' ' : '') + words[n];
+        if (ctx.measureText(testLine).width > maxWidth && line) {
+          lines.push(line);
+          line = words[n];
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line);
+      return lines;
+    }
 
     function drawText() {
-      const userText = document.getElementById("userText").value;
-      const fontSize = document.getElementById("fontSize").value;
+      const input = userText.value;
+      const fontSize = fontSizeInput.value;
+      const allCaps = document.getElementById('capsToggle').checked;
+      const align = document.getElementById('textAlign').value;
+      const fontFamily = fontSelect.value;
+      const rawText = allCaps ? input.toUpperCase() : input;
+      const paras = rawText.split('\n');
+      const w = canvas.width, h = canvas.height;
+      const scaleFactor = w / 1360;
+      const scaledFontSize = fontSize * scaleFactor;
+      const bg = ctx.createRadialGradient(w/2,h/2,150,w/2,h/2,w);
+      bg.addColorStop(0,'#0a0a18'); bg.addColorStop(1,'#05050a');
+      ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
+      ctx.strokeStyle = '#c89117'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(68,5); ctx.lineTo(w-68,5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(68,h-5); ctx.lineTo(w-68,h-5); ctx.stroke();
+      ctx.font = `bold ${scaledFontSize}px '${fontFamily}', serif`;
+      ctx.textAlign = align; ctx.textBaseline = 'middle';
+      let x = w/2; if(align==='left') x=100; else if(align==='right') x=w-100;
+      const maxWidth = w - 200;
+      let lines = [];
+      paras.forEach(p => lines = lines.concat(wrapText(p, maxWidth)));
+      const lineH = scaledFontSize + 10;
+      const startY = h/2 - (lineH*(lines.length-1)/2);
+      warning.style.display = lines.length * lineH > h - 60 ? 'block' : 'none';
+      ctx.fillStyle = '#c89117';
+      lines.forEach((ln,i) => ctx.fillText(ln, x, startY + i*lineH));
+    }
 
-      ctx.fillStyle = "#0a0a18";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function updateSizeValue() {
+      sizeValue.innerText = fontSizeInput.value;
+      drawText();
+    }
 
-      ctx.strokeStyle = "#c89117";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(68, 5);
-      ctx.lineTo(canvas.width - 68, 5);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(68, canvas.height - 5);
-      ctx.lineTo(canvas.width - 68, canvas.height - 5);
-      ctx.stroke();
-
-      ctx.fillStyle = "#c89117";
-      ctx.font = `bold ${fontSize}px CustomFont, Georgia, serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(userText.toUpperCase(), canvas.width / 2, canvas.height / 2);
+    function handleInput() {
+      downloadBtn.disabled = !userText.value.trim();
+      drawText();
     }
 
     function downloadImage() {
+      const inputText = userText.value.trim();
+      const safeText = inputText ? inputText.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '') : 'custom_text_poster';
       const link = document.createElement('a');
-      link.download = 'custom_text_poster.png';
+      link.download = `${safeText}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      showToast();
     }
 
-    drawText();
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 2000);
+    }
+
+    function resizeCanvas() {
+      if(window.innerWidth<768) { canvas.width=800; canvas.height=360;} else { canvas.width=1360; canvas.height=613; }
+      drawText();
+    }
+
+    themeToggle.addEventListener('change', () => {
+      document.body.className = themeToggle.value;
+    });
+    window.addEventListener('resize', resizeCanvas);
+    handleInput();
+    resizeCanvas();
   </script>
 </body>
 </html>
