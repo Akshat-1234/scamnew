@@ -28,6 +28,12 @@
             color: white;
             padding: 1rem;
             text-decoration: none;
+            font-weight: normal;
+        }
+
+        nav a.gold-text {
+            color: gold;
+            font-weight: bold;
         }
 
         nav a:hover {
@@ -36,6 +42,36 @@
 
         main {
             padding: 2rem;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .gold-button {
+            background: gold;
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover, .gold-button:hover {
+            opacity: 0.85;
         }
 
         footer {
@@ -58,6 +94,7 @@
     <nav>
         <a href="#">Home</a>
         <a href="pyramidscheme.html">Pyramid Scheme</a>
+        <a href="textgenerator.html" class="gold-text">Text Generator</a>
         <a href="#">About</a>
         <a href="#">Projects</a>
         <a href="#">Contact</a>
@@ -66,10 +103,14 @@
     <main>
         <h2>About This Site</h2>
         <p>This is a simple HTML and CSS website not designed to scam people</p>
-        <a href="pyramidscheme.html">
-          <button type="button">Pyramid Scheme</button>
-        </a>
-        
+        <div class="button-row">
+            <a href="pyramidscheme.html">
+                <button type="button">Pyramid Scheme</button>
+            </a>
+            <a href="textgenerator.html">
+                <button type="button" class="gold-button">Text Generator</button>
+            </a>
+        </div>
     </main>
 
     <footer>
