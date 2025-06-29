@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Text Poster</title>
   <style>
     @font-face {
       font-family: 'CustomFont';
       src: url('https://fonts.gstatic.com/s/ebgaramond/v27/SlGTmQiekhY6rW4zXyZhZV3aCw.woff2') format('woff2');
     }
+
     body {
       margin: 0;
       padding: 0;
@@ -20,41 +22,58 @@
       font-family: 'CustomFont', serif;
       color: #c89117;
     }
+
     #textCanvas {
       display: block;
-      margin: 20px 0;
-      border: 1px solid #333;
+      margin: 20px auto;
+      border: none;
+      max-width: 100%;
+      height: auto;
     }
-    input, button, select {
+
+    input, button {
       font-size: 16px;
       padding: 10px;
       border-radius: 5px;
       border: none;
       outline: none;
+      width: 100%;
+      box-sizing: border-box;
     }
+
     input[type="text"] {
-      width: 250px;
+      max-width: 250px;
     }
+
     input[type="range"] {
-      width: 150px;
+      max-width: 150px;
     }
+
     button {
       background-color: #c89117;
       color: black;
       font-weight: bold;
       cursor: pointer;
-      margin-left: 10px;
     }
+
     button:hover {
       background-color: #e2a41a;
     }
+
     .controls {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
       gap: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
+      padding: 10px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .copyright {
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #888;
     }
   </style>
 </head>
@@ -67,6 +86,7 @@
   </div>
 
   <canvas id="textCanvas" width="1360" height="613"></canvas>
+  <div class="copyright">© Akshat</div>
 
   <script>
     const canvas = document.getElementById("textCanvas");
@@ -93,7 +113,8 @@
       ctx.fillStyle = "#c89117";
       ctx.font = `bold ${fontSize}px CustomFont, Georgia, serif`;
       ctx.textAlign = "center";
-      ctx.fillText(userText.toUpperCase(), canvas.width / 2, canvas.height / 2 + 30);
+      ctx.textBaseline = "middle";
+      ctx.fillText(userText.toUpperCase(), canvas.width / 2, canvas.height / 2);
     }
 
     function downloadImage() {
