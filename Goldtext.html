@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Custom Text Poster</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@700&family=Montserrat:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@700&family=Montserrat:wght@700&family=Roboto:wght@700&family=Lobster&family=Oswald:wght@700&family=Playfair+Display:wght@700&display=swap');
     body {
       margin: 0;
       padding: 0;
@@ -20,7 +20,7 @@
       background: radial-gradient(circle at center, #fbfbfb 0%, #e0e0e0 100%);
       color: #664400;
     }
-    #textCanvas {
+    canvas {
       display: block;
       margin: 20px auto;
       max-width: 100%;
@@ -94,8 +94,31 @@
       transform: scale(1.05);
     }
     .tooltip {
-      border-bottom: 1px dotted #999;
-      cursor: help;
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: max-content;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 4px;
+      padding: 6px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .tooltip:focus-within .tooltiptext,
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
     }
     .copyright {
       text-align: center;
@@ -129,39 +152,71 @@
       .option {
         flex: 1 1 100%;
       }
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
     }
   </style>
 </head>
 <body class="dark">
   <div class="controls">
     <div class="control-group">
-      <label for="themeToggle">Theme: <span class="tooltip" title="Switch light/dark mode">ℹ️</span></label>
+      <label for="themeToggle">Theme:
+        <span class="tooltip" tabindex="0">ℹ️
+          <span class="tooltiptext">Switch light/dark mode</span>
+        </span>
+      </label>
       <select id="themeToggle">
         <option value="dark">Dark</option>
         <option value="light">Light</option>
       </select>
     </div>
     <div class="control-group">
-      <label for="fontSelect">Font: <span class="tooltip" title="Choose a font family">ℹ️</span></label>
+      <label for="fontSelect">Font:
+        <span class="tooltip" tabindex="0">ℹ️
+          <span class="tooltiptext">Choose a font family</span>
+        </span>
+      </label>
       <select id="fontSelect" onchange="drawText()">
         <option value="EB Garamond">EB Garamond</option>
         <option value="Montserrat">Montserrat</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Lobster">Lobster</option>
+        <option value="Oswald">Oswald</option>
+        <option value="Playfair Display">Playfair Display</option>
       </select>
     </div>
     <div class="control-group">
-      <label for="userText">Enter your title: <span class="tooltip" title="Type your poster text here">ℹ️</span></label>
+      <label for="userText">Enter your title:
+        <span class="tooltip" tabindex="0">ℹ️
+          <span class="tooltiptext">Type your poster text here</span>
+        </span>
+      </label>
       <textarea id="userText" placeholder="Text here..." oninput="handleInput()"></textarea>
     </div>
     <div class="options-row">
       <div class="option">
-        <label for="fontSize">Size: <span id="sizeValue">96</span>px <span class="tooltip" title="Adjust font size">ℹ️</span></label>
+        <label for="fontSize">Size: <span id="sizeValue">96</span>px
+          <span class="tooltip" tabindex="0">ℹ️
+            <span class="tooltiptext">Adjust font size</span>
+          </span>
+        </label>
         <input type="range" id="fontSize" min="40" max="160" value="96" oninput="updateSizeValue()">
       </div>
       <div class="option">
-        <label><input type="checkbox" id="capsToggle" checked onchange="drawText()"> ALL CAPS <span class="tooltip" title="Toggle uppercase text">ℹ️</span></label>
+        <label><input type="checkbox" id="capsToggle" checked onchange="drawText()"> ALL CAPS
+          <span class="tooltip" tabindex="0">ℹ️
+            <span class="tooltiptext">Toggle uppercase text</span>
+          </span>
+        </label>
       </div>
       <div class="option">
-        <label for="textAlign">Alignment: <span class="tooltip" title="Choose text alignment">ℹ️</span></label>
+        <label for="textAlign">Alignment:
+          <span class="tooltip" tabindex="0">ℹ️
+            <span class="tooltiptext">Choose text alignment</span>
+          </span>
+        </label>
         <select id="textAlign" onchange="drawText()">
           <option value="center">Center</option>
           <option value="left">Left</option>
@@ -172,7 +227,7 @@
     <div class="warning" id="textWarning">⚠️ Text is too long and may overflow the canvas.</div>
     <button id="downloadBtn" onclick="downloadImage()" disabled>Download Image</button>
   </div>
-  <canvas id="textCanvas" width="1360" height="613"></canvas>
+  <canvas id="textCanvas"></canvas>
   <div class="copyright">© Akshat</div>
   <div id="toast">Your poster is downloading!</div>
   <script>
@@ -260,7 +315,8 @@
     }
 
     function resizeCanvas() {
-      if(window.innerWidth<768) { canvas.width=800; canvas.height=360;} else { canvas.width=1360; canvas.height=613; }
+      canvas.width = window.innerWidth < 768 ? 800 : 1360;
+      canvas.height = window.innerWidth < 768 ? 360 : 613;
       drawText();
     }
 
@@ -272,4 +328,6 @@
     resizeCanvas();
   </script>
 </body>
+</html>
+
 </html>
