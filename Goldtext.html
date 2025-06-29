@@ -1,55 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Golden Text Generator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AISA KYU VEDANT</title>
   <style>
     body {
       margin: 0;
-      background-color: #0d0d1a; /* dark blue */
       height: 100vh;
+      background: radial-gradient(#0a0a1a, #000010);
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      font-family: 'Cinzel', serif;
+      align-items: center;
+      color: #d4af37;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+      position: relative;
     }
 
-    #gold-text {
-      font-size: 70px;
-      font-weight: bold;
-      background: linear-gradient(180deg, #FFD700 0%, #B8860B 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 
-        1px 1px 2px #b36b00,
-        2px 2px 4px #000;
-      margin-bottom: 30px;
+    .border-line {
+      position: absolute;
+      height: 3px;
+      background: linear-gradient(to right, #d4af37, #b8860b, #d4af37);
+      width: 90%;
     }
 
-    input {
-      padding: 10px 20px;
-      font-size: 20px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      width: 300px;
+    .top-border {
+      top: 20px;
+    }
+
+    .bottom-border {
+      bottom: 20px;
+    }
+
+    .title {
       text-align: center;
+      color: #FFD700;
+      text-shadow: 
+        1px 1px 0 #b8860b,
+        2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    .title span {
+      display: block;
+      background: linear-gradient(to bottom, #ffef9f, #c79500);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: bold;
+    }
+
+    .line1 {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+
+    .line2 {
+      font-size: 100px;
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
-  <div>
-    <h1 id="gold-text">AISA KYU VEDANT</h1>
-    <input type="text" placeholder="Type your text..." oninput="updateText(this.value)">
+  <div class="border-line top-border"></div>
+
+  <div class="title">
+    <span class="line1">AISA KYU</span>
+    <span class="line2">VEDANT</span>
   </div>
 
-  <script>
-    function updateText(value) {
-      document.getElementById("gold-text").innerText = value || "AISA KYU VEDANT";
-    }
-  </script>
+  <div class="border-line bottom-border"></div>
 </body>
 </html>
-
