@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="en">
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Kitchen Sticker Generator 🍳</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-light: #f9fafb;
+      --bg-dark: #121212;
+      --text-light: #333;
+      --text-dark: #eee;
+      --primary: #007aff;
+      --success: #22c55e;
+      --error: #ef4444;
+      --card-bg: white;
+      --card-dark-bg: #1e1e1e;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 20px 0 10px;
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,122,255,0.4);
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: #005ecb;
+      transform: translateY(-1px);
+    }
+    .toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: 2px solid var(--primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--primary);
+      background: var(--card-bg);
+      transition: background 0.3s;
+    }
+    .dark-mode .toggle {
+      background: var(--card-dark-bg);
+    }
+    .sticker-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      max-width: 100%;
+    }
+    #stickerImg {
+      width: 220px;
+      height: 220px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #stickerImg:hover {
+      transform: scale(1.05);
+    }
+    .message {
+      margin: 12px;
+      font-size: 0.95rem;
+    }
+    .message.success { color: var(--success); }
+    .message.error { color: var(--error); }
+    .combos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+      max-width: 400px;
+    }
+    .combo-item {
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+    .dark-mode .combo-item {
+      background: var(--card-dark-bg);
+    }
+    .combo-item:hover {
+      transform: scale(1.08);
+    }
+    .history {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 400px;
+    }
+    .history-item {
+      font-size: 1rem;
+      padding: 6px 10px;
+      background: var(--card-bg);
+      border-radius: 6px;
+      border: 1px dashed #aaa;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .dark-mode .history-item {
+      background: var(--card-dark-bg);
+      border-color: #555;
+    }
+    .history-item:hover {
+      transform: scale(1.08);
+    }
+    @media (max-width: 500px) {
+      #stickerImg { width: 180px; height: 180px; }
+      input, button { font-size: 0.9rem; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle" id="toggleMode">🌙</button>
+  <h1>Emoji Kitchen Sticker Generator 🍳</h1>  <div class="controls">
+    <input type="text" id="emoji1" maxlength="2" placeholder="😀">
+    <input type="text" id="emoji2" maxlength="2" placeholder="💖">
+    <button onclick="generateSticker()">Generate</button>
+    <button onclick="clearAll()">Clear</button>
+  </div>  <div class="sticker-container" id="stickerContainer"></div>
+  <div class="message" id="msg"></div>  <div class="combos" id="comboList"></div>  <h2>Recent Combos</h2>
+  <div class="history" id="historyList"></div>  <script>
+    let history = [];
+    const popularEmojis = ['😂','😍','😭','😊','🙏','😎','🔥','🥺','✨','❤','😡','🤯','🎉','👍','😴'];
+
+    document.getElementById('toggleMode').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('toggleMode').textContent = document.body.classList.contains('dark-mode') ? '☀' : '🌙';
+    });
+
+    function generateSticker() {
+      const e1 = document.getElementById('emoji1').value.trim();
+      const e2 = document.getElementById('emoji2').value.trim();
+      const container = document.getElementById('stickerContainer');
+      const msg = document.getElementById('msg');
+      const comboList = document.getElementById('comboList');
+      msg.textContent = '';
+      comboList.innerHTML = '';
+
+      if (!e1 || !e2) {
+        msg.textContent = 'Enter both emojis.';
+        msg.className = 'message error';
+        container.innerHTML = '';
+        return;
+      }
+
+      const url = https://emojik.vercel.app/s/${encodeURIComponent(e1)}_${encodeURIComponent(e2)}?size=256;
+      container.innerHTML = <img id="stickerImg" src="${url}" alt="Sticker" onclick="copySticker()">;
+      addHistory(${e1}+${e2});
+      showCombos(e1);
+    }
+
+    function showCombos(e1) {
+      const comboList = document.getElementById('comboList');
+      popularEmojis.forEach(e => {
+        if (e !== e1) {
+          const div = document.createElement('div');
+          div.className = 'combo-item';
+          div.textContent = ${e1} + ${e};
+          div.onclick = () => {
+            document.getElementById('emoji2').value = e;
+            generateSticker();
+          };
+          comboList.appendChild(div);
+        }
+      });
+    }
+
+    function copySticker() {
+      const img = document.getElementById('stickerImg');
+      fetch(img.src)
+        .then(r => r.blob())
+        .then(blob => navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]))
+        .then(() => showMessage('Sticker copied to clipboard!', 'success'))
+        .catch(() => showMessage('Copy failed. Your browser may not support this.', 'error'));
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('msg');
+      msg.textContent = text;
+      msg.className = message ${type};
+      setTimeout(() => msg.textContent = '', 2000);
+    }
+
+    function addHistory(combo) {
+      if (!history.includes(combo)) {
+        history.unshift(combo);
+        if (history.length > 10) history.pop();
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      list.innerHTML = '';
+      history.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.textContent = c.replace('+', ' + ');
+        div.onclick = () => {
+          const parts = c.split('+');
+          document.getElementById('emoji1').value = parts[0];
+          document.getElementById('emoji2').value = parts[1];
+          generateSticker();
+        };
+        list.appendChild(div);
+      });
+    }
+
+    function clearAll() {
+      document.getElementById('emoji1').value = '';
+      document.getElementById('emoji2').value = '';
+      document.getElementById('stickerContainer').innerHTML = '';
+      document.getElementById('comboList').innerHTML = '';
+      document.getElementById('msg').textContent = '';
+    }
+  </script></body>
+</html>
